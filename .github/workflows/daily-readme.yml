@@ -1,25 +1,33 @@
-const fs = require("fs");
-const path = "./quotes.txt";
-const readmePath = "./README.md";
+name: Daily README Quote Update
 
-// Read quotes
-const quotes = fs.readFileSync(path, "utf-8")
-  .split("\n")
-  .filter(Boolean);
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Daily at midnight UTC
+  workflow_dispatch:
 
-// Pick random quote
-const quote = quotes[Math.floor(Math.random() * quotes.length)];
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
 
-// Read README
-let readme = fs.readFileSync(readmePath, "utf-8");
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-// Replace placeholders
-readme = readme.replace(/<!--DAILY_QUOTE-->/, quote);
-readme = readme.replace(
-  /<!--LAST_UPDATED-->/,
-  `Updated on: ${new Date().toISOString().replace("T", " ").split(".")[0]} UTC`
-);
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
-// Write back
-fs.writeFileSync(readmePath, readme);
-console.log("README updated successfully");
+      - name: Run update-readme.js
+        run: node update-readme.js
+
+      - name: Commit & create/update pull request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          branch: daily-readme-update
+          commit-message: "Daily README quote update"
+          title: "Daily README quote update"
+          body: "Automated update of Daily Dev Quote."
+          auto-merge: true
+          auto-merge-method: squash
