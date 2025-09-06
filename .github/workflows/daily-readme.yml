@@ -3,7 +3,7 @@ name: Daily README Quote Update
 on:
   schedule:
     - cron: '0 0 * * *'  # Daily at midnight UTC
-  workflow_dispatch:
+  workflow_dispatch:      # Manual trigger
 
 jobs:
   update-readme:
@@ -21,13 +21,10 @@ jobs:
       - name: Run update-readme.js
         run: node update-readme.js
 
-      - name: Commit & create/update pull request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.PAT_TOKEN }}
-          branch: daily-readme-update
-          commit-message: "Daily README quote update"
-          title: "Daily README quote update"
-          body: "Automated update of Daily Dev Quote."
-          auto-merge: true
-          auto-merge-method: squash
+      - name: Commit & push changes directly
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Daily README quote update" || echo "No changes to commit"
+          git push origin main
