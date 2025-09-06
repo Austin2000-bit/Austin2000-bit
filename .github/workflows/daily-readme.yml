@@ -1,34 +1,25 @@
-name: Daily README Quote Update
+const fs = require("fs");
+const path = "./quotes.txt";
+const readmePath = "./README.md";
 
-on:
-  schedule:
-    - cron: '0 0 * * *'  # Daily at midnight UTC
-  workflow_dispatch:    # Allows manual trigger
+// Read quotes
+const quotes = fs.readFileSync(path, "utf-8")
+  .split("\n")
+  .filter(Boolean);
 
-jobs:
-  update-readme:
-    runs-on: ubuntu-latest
+// Pick random quote
+const quote = quotes[Math.floor(Math.random() * quotes.length)];
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+// Read README
+let readme = fs.readFileSync(readmePath, "utf-8");
 
-      - name: Pick a random quote and update README
-        run: |
-          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
-          QUOTE=$(shuf -n 1 quotes.txt)
+// Replace placeholders
+readme = readme.replace(/<!--DAILY_QUOTE-->/, quote);
+readme = readme.replace(
+  /<!--LAST_UPDATED-->/,
+  `Updated on: ${new Date().toISOString().replace("T", " ").split(".")[0]} UTC`
+);
 
-          # Replace placeholders in README without adding backslashes
-          sed -i "s|<!--DAILY_QUOTE-->|$QUOTE|" README.md
-          sed -i "s|<!--LAST_UPDATED-->|Updated on: $TIMESTAMP|" README.md
-
-      - name: Commit & create/update pull request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.PAT_TOKEN }}   # Use your PAT token here
-          branch: daily-readme-update
-          commit-message: "Daily README quote update"
-          title: "Daily README quote update"
-          body: "Automated update of Daily Dev Quote."
-          auto-merge: true
-          auto-merge-method: squash
+// Write back
+fs.writeFileSync(readmePath, readme);
+console.log("README updated successfully");
