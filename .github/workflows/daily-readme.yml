@@ -55,7 +55,7 @@ jobs:
           git add README.md
           git diff --cached --quiet || git commit -m "Update daily dev quote and timestamp"
 
-      # 5️⃣ Try to push directly
+      # 5️⃣ Try to push directly to main
       - name: Push directly
         id: push
         run: |
@@ -78,3 +78,4 @@ jobs:
           base: main
           title: "Daily README Update"
           body: "This PR updates the daily dev quote and timestamp in README.md"
+          create-branch: true  # ensures branch is created if it doesn't exist
