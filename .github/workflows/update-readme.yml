@@ -1,30 +1,58 @@
-name: Update README daily
+name: Update Daily README
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # runs every day at midnight UTC
+    - cron: '0 0 * * *'  # daily at midnight UTC
   workflow_dispatch:
 
 jobs:
   update-readme:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Update README
-        run: |
-          echo "# Austin2000-bit" > README.md
-          echo "Last updated: $(date)" >> README.md
-          echo "" >> README.md
-          echo "## My GitHub Stats" >> README.md
-          echo "![Top Repos](https://github-contributor-stats.vercel.app/api?username=Austin2000-bit&limit=5&theme=dark&combine_all_yearly_contributions=true)" >> README.md
-          echo "![Streak](https://github-readme-streak-stats.herokuapp.com/?user=Austin2000-bit&theme=dark)" >> README.md
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
-      - name: Commit changes
+      - name: Update README with daily quote and timestamp
         run: |
-          git config --global user.name "Austin2000-bit"
-          git config --global user.email "austinezekiel95@gmail.com"
+          node -e "
+            const fs = require('fs');
+            const filePath = 'README.md';
+            if (!fs.existsSync(filePath)) {
+              console.error('README.md not found!');
+              process.exit(1);
+            }
+
+            const quotes = [
+              'Code is like humor. When you have to explain it, it’s bad. — Cory House',
+              'Experience is the name everyone gives to their mistakes. — Oscar Wilde',
+              'First, solve the problem. Then, write the code. — John Johnson',
+              'Simplicity is the soul of efficiency. — Austin Freeman',
+              'Before software can be reusable it first has to be usable. — Ralph Johnson'
+            ];
+            const quote = quotes[Math.floor(Math.random() * quotes.length)];
+
+            let readme = fs.readFileSync(filePath, 'utf8');
+
+            // Replace daily quote
+            readme = readme.replace(/<!--DAILY_QUOTE-->.*$/, '<!--DAILY_QUOTE--> ' + quote);
+
+            // Replace LAST_UPDATED
+            const now = new Date().toUTCString();
+            readme = readme.replace(/<!--LAST_UPDATED-->.*$/, '<!--LAST_UPDATED--> Updated on: ' + now);
+
+            fs.writeFileSync(filePath, readme);
+          "
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
-          git commit -m "Daily update"
+          git diff --cached --quiet || git commit -m "Update daily dev quote and timestamp"
           git push
