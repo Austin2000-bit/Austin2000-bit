@@ -1,1 +1,9 @@
-i love coding
+Code is like humor. When you have to explain it, it’s bad.
+First, solve the problem. Then, write the code.
+Experience is the name everyone gives to their mistakes.
+Simplicity is the soul of efficiency.
+Talk is cheap. Show me the code.
+Programs must be written for people to read, and only incidentally for machines to execute.
+Any fool can write code that a computer can understand. Good programmers write code that humans can understand.
+Strive for clarity, not cleverness.
+Before software can be reusable it first has to be usable.
