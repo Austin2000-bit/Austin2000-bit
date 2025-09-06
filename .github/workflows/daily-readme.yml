@@ -1,47 +1,33 @@
-name: Daily README Update (PR)
+name: Daily README Update
 
 on:
   schedule:
-    - cron: "0 0 * * *"   # every day at midnight UTC
-  workflow_dispatch:       # allow manual trigger
+    - cron: '0 0 * * *'  # Runs daily at midnight UTC
+  workflow_dispatch:    # Allows manual trigger
 
 jobs:
   update-readme:
     runs-on: ubuntu-latest
+
     steps:
-      # Step 1: Checkout repository
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # Step 2: Update README with a random quote + timestamp
-      - name: Update README
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Run your update script
         run: |
-          QUOTES=(
-            "Code is like humor. When you have to explain it, it’s bad. — Cory House"
-            "Experience is the name everyone gives to their mistakes. — Oscar Wilde"
-            "First, solve the problem. Then, write the code. — John Johnson"
-            "Simplicity is the soul of efficiency. — Austin Freeman"
-            "Before software can be reusable it first has to be usable. — Ralph Johnson"
-            "Programs must be written for people to read, and only incidentally for machines to execute. — Harold Abelson"
-            "Any fool can write code that a computer can understand. Good programmers write code that humans can understand. — Martin Fowler"
-            "Debugging is like being the detective in a crime movie where you are also the murderer. — Filipe Fortes"
-            "The best way to get a project done faster is to start sooner. — Jim Highsmith"
-            "Code never lies, comments sometimes do. — Ron Jeffries"
-          )
-          INDEX=$((RANDOM % ${#QUOTES[@]}))
-          QUOTE="${QUOTES[$INDEX]}"
+          # Example: update README daily quote
+          node update-readme.js
 
-          # Replace markers in README
-          sed -i "s|<!--DAILY_QUOTE-->.*|<!--DAILY_QUOTE--> $QUOTE|" README.md
-          sed -i "s|<!--LAST_UPDATED-->.*|<!--LAST_UPDATED--> Updated on: $(date -u)|" README.md
-
-      # Step 3: Create or update a PR
-      - name: Create Pull Request
+      - name: Create or update pull request
         uses: peter-evans/create-pull-request@v5
         with:
+          token: ${{secrets.PAT_TOKEN}}   # <-- Use the PAT secret here
           branch: daily-readme-update
-          commit-message: "Update daily dev quote and timestamp"
+          commit-message: "Daily README update"
           title: "Daily README update"
-          body: "Automated update of README with a new quote and timestamp."
-          labels: daily-update
-          token: ${{ secrets.GITHUB_TOKEN }}
+          body: "Automated daily update of README."
