@@ -2,33 +2,35 @@ name: Update Daily README
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # daily at midnight UTC
-  workflow_dispatch:      # manual trigger
+    - cron: '0 0 * * *'  # runs daily at midnight UTC
+  workflow_dispatch:      # allows manual trigger
 
 jobs:
   update-readme:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout repository
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      # Step 2: Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
+      # Step 3: Update README safely
       - name: Update README
         run: |
-          node <<'EOF'
+          node -e "
           const fs = require('fs');
           const file = 'README.md';
-          if (!fs.existsSync(file)) {
-            console.error('README.md not found');
-            process.exit(1);
+          if (!fs.existsSync(file)) { 
+            console.log('README.md not found, skipping update.'); 
+            process.exit(0); 
           }
 
-          // Predefined quotes
           const quotes = [
             'Code is like humor. When you have to explain it, it’s bad. — Cory House',
             'Experience is the name everyone gives to their mistakes. — Oscar Wilde',
@@ -45,16 +47,14 @@ jobs:
           const quote = quotes[Math.floor(Math.random() * quotes.length)];
           let content = fs.readFileSync(file, 'utf8');
 
-          // Replace daily quote placeholder
           content = content.replace(/<!--DAILY_QUOTE-->.*$/, '<!--DAILY_QUOTE--> ' + quote);
-
-          // Replace last updated placeholder
-          const now = new Date().toUTCString();
-          content = content.replace(/<!--LAST_UPDATED-->.*$/, '<!--LAST_UPDATED--> Updated on: ' + now);
+          content = content.replace(/<!--LAST_UPDATED-->.*$/, '<!--LAST_UPDATED--> Updated on: ' + new Date().toUTCString());
 
           fs.writeFileSync(file, content);
-          EOF
+          console.log('README updated successfully.');
+          "
 
+      # Step 4: Commit and push changes
       - name: Commit and push changes
         run: |
           git config --local user.name "github-actions[bot]"
