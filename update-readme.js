@@ -1,23 +1,25 @@
-const fs = require('fs');
+const fs = require("fs");
+const path = "./quotes.txt";
+const readmePath = "./README.md";
 
-// Read quotes from quotes.txt
-const quotes = fs.readFileSync('quotes.txt', 'utf-8')
-  .split('\n')
+// Read quotes
+const quotes = fs.readFileSync(path, "utf-8")
+  .split("\n")
   .filter(Boolean);
 
-// Pick a random quote
+// Pick random quote
 const quote = quotes[Math.floor(Math.random() * quotes.length)];
 
-// Read README.md
-let readme = fs.readFileSync('README.md', 'utf-8');
+// Read README
+let readme = fs.readFileSync(readmePath, "utf-8");
 
 // Replace placeholders
 readme = readme.replace(/<!--DAILY_QUOTE-->/, quote);
 readme = readme.replace(
   /<!--LAST_UPDATED-->/,
-  `Updated on: ${new Date().toISOString().replace('T', ' ').replace(/\..+/, '')} UTC`
+  `Updated on: ${new Date().toISOString().replace("T", " ").split(".")[0]} UTC`
 );
 
 // Write back
-fs.writeFileSync('README.md', readme);
-console.log('README updated successfully');
+fs.writeFileSync(readmePath, readme);
+console.log("README updated successfully");
