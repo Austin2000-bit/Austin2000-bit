@@ -1,26 +1,26 @@
-name: Update Daily README
+name: Daily README Update
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # runs daily at midnight UTC
-  workflow_dispatch:      # allows manual trigger
+    - cron: '0 0 * * *'   # daily at midnight UTC
+  workflow_dispatch:       # manual trigger
 
 jobs:
   update-readme:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout repository
+      # 1️⃣ Checkout repository
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # Step 2: Setup Node.js
+      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      # Step 3: Update README
+      # 3️⃣ Update README with random quote
       - name: Update README
         run: |
           node -e "
@@ -46,22 +46,35 @@ jobs:
           console.log('README updated successfully.');
           "
 
-      # Step 4: Commit changes to a new branch
+      # 4️⃣ Commit changes to a temporary branch
       - name: Commit changes
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -b update-readme-branch
+          git checkout -b daily-readme-update || git checkout daily-readme-update
           git add README.md
-          git commit -m "Update daily dev quote and timestamp"
+          git diff --cached --quiet || git commit -m "Update daily dev quote and timestamp"
 
-      # Step 5: Push branch and create pull request
-      - name: Push branch and create PR
+      # 5️⃣ Try to push directly
+      - name: Push directly
+        id: push
+        run: |
+          set -e
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          if git push origin HEAD:main; then
+            echo "PUSH_SUCCESS=true" >> $GITHUB_ENV
+          else
+            echo "PUSH_SUCCESS=false" >> $GITHUB_ENV
+          fi
+
+      # 6️⃣ Fallback: Create PR if push fails
+      - name: Create pull request if push blocked
+        if: env.PUSH_SUCCESS == 'false'
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Update daily dev quote and timestamp"
-          branch: update-readme-branch
+          branch: daily-readme-update
           base: main
           title: "Daily README Update"
           body: "This PR updates the daily dev quote and timestamp in README.md"
