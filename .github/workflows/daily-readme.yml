@@ -2,8 +2,8 @@ name: Daily README Quote Update
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Daily at midnight UTC
-  workflow_dispatch:
+    - cron: '0 0 * * *'  # Runs daily at midnight UTC
+  workflow_dispatch:      # Allows manual trigger
 
 jobs:
   update-readme:
@@ -18,10 +18,21 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Run update-readme.js
-        run: node update-readme.js
+      - name: Pick a random quote and update README
+        run: |
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          # Pick a random quote from quotes.txt
+          QUOTE=$(shuf -n 1 quotes.txt)
+          # Replace the placeholder in README.md
+          perl -i -pe "s|<!--DAILY_QUOTE-->|$QUOTE|" README.md
+          # Update last updated timestamp
+          perl -i -pe "s|<!--LAST_UPDATED-->|Updated on: $TIMESTAMP|" README.md
+          # Stage README.md
+          git add README.md
+          # Force commit to ensure a commit even if quote is same
+          git commit -m "Daily README quote update" || echo "No changes to commit"
 
-      - name: Commit & create/update pull request
+      - name: Create or update pull request
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.PAT_TOKEN }}
@@ -31,3 +42,4 @@ jobs:
           body: "Automated update of Daily Dev Quote."
           auto-merge: true
           auto-merge-method: squash
+          delete-branch: true   # Delete PR branch after merge
