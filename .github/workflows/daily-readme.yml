@@ -17,14 +17,14 @@ jobs:
         run: |
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
 
-          # Pick a random quote directly in Perl to avoid backslashes
+          # Pick a random quote directly in Perl (no backslashes)
           perl -i -pe '
             BEGIN {
               open(F,"quotes.txt") or die $!;
               @lines = <F>;
               close(F);
-              $q = $lines[int(rand(@lines))];
-              chomp($q);
+              $q = $lines[int(rand(@lines))];  # pick a random line
+              chomp($q);                        # remove newline
             }
             s|<!--DAILY_QUOTE-->|$q|' README.md
 
