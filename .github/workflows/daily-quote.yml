@@ -2,8 +2,8 @@ name: Update Daily Dev Quote
 
 on:
   schedule:
-    - cron: "0 8 * * *" # Runs daily at 8:00 UTC
-  workflow_dispatch:     # Allows manual trigger
+    - cron: "0 8 * * *"
+  workflow_dispatch:
 
 jobs:
   update-quote:
@@ -12,6 +12,11 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'  # ensures Node.js is installed
 
       - name: Pick a random quote
         id: quote
@@ -22,19 +27,22 @@ jobs:
             "First, solve the problem. Then, write the code. — John Johnson"
             "Simplicity is the soul of efficiency. — Austin Freeman"
             "Before software can be reusable it first has to be usable. — Ralph Johnson"
-            "Programs must be written for people to read, and only incidentally for machines to execute. — Harold Abelson"
-            "Any fool can write code that a computer can understand. Good programmers write code that humans can understand. — Martin Fowler"
           )
           INDEX=$((RANDOM % ${#QUOTES[@]}))
           echo "QUOTE=${QUOTES[$INDEX]}" >> $GITHUB_ENV
 
-      - name: Update README using Node.js
+      - name: Update README
         run: |
+          FILE="README.md"
+          if [ ! -f "$FILE" ]; then
+            echo "README.md not found!"
+            exit 1
+          fi
           node -e "
             const fs = require('fs');
-            const readme = fs.readFileSync('README.md', 'utf8');
+            const readme = fs.readFileSync('$FILE', 'utf8');
             const newReadme = readme.replace(/<!--DAILY_QUOTE-->.*$/, '<!--DAILY_QUOTE--> ' + process.env.QUOTE);
-            fs.writeFileSync('README.md', newReadme);
+            fs.writeFileSync('$FILE', newReadme);
           "
 
       - name: Commit and push changes
@@ -42,5 +50,5 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
-          git commit -m "Update daily dev quote"
+          git diff --cached --quiet || git commit -m "Update daily dev quote"
           git push
