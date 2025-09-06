@@ -14,6 +14,9 @@
 ![](https://github-readme-stats.vercel.app/api/top-langs/?username=Austin2000-bit&theme=dark&hide_border=false&include_all_commits=true&count_private=true&layout=compact)
 
 
+### ✍️ Daily Dev Quote
+<!--DAILY_QUOTE-->
+
 <!--LAST_UPDATED--> Updated on:
 
 ### 🔝 Top Contributed Repo
