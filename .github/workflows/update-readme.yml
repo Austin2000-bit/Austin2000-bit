@@ -1,0 +1,30 @@
+name: Update README daily
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # runs every day at midnight UTC
+  workflow_dispatch:
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Update README
+        run: |
+          echo "# Austin2000-bit" > README.md
+          echo "Last updated: $(date)" >> README.md
+          echo "" >> README.md
+          echo "## My GitHub Stats" >> README.md
+          echo "![Top Repos](https://github-contributor-stats.vercel.app/api?username=Austin2000-bit&limit=5&theme=dark&combine_all_yearly_contributions=true)" >> README.md
+          echo "![Streak](https://github-readme-streak-stats.herokuapp.com/?user=Austin2000-bit&theme=dark)" >> README.md
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "Austin2000-bit"
+          git config --global user.email "austinezekiel95@gmail.com"
+          git add README.md
+          git commit -m "Daily update"
+          git push
