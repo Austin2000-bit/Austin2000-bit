@@ -2,8 +2,8 @@ name: Update Daily Dev Quote
 
 on:
   schedule:
-    - cron: "0 8 * * *" # runs daily at 8:00 UTC
-  workflow_dispatch:      # allows manual trigger
+    - cron: "0 8 * * *" # Runs daily at 8:00 UTC
+  workflow_dispatch:     # Allows manual trigger
 
 jobs:
   update-quote:
@@ -13,7 +13,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Select a random quote
+      - name: Pick a random quote
         id: quote
         run: |
           QUOTES=(
@@ -22,13 +22,20 @@ jobs:
             "First, solve the problem. Then, write the code. — John Johnson"
             "Simplicity is the soul of efficiency. — Austin Freeman"
             "Before software can be reusable it first has to be usable. — Ralph Johnson"
+            "Programs must be written for people to read, and only incidentally for machines to execute. — Harold Abelson"
+            "Any fool can write code that a computer can understand. Good programmers write code that humans can understand. — Martin Fowler"
           )
           INDEX=$((RANDOM % ${#QUOTES[@]}))
           echo "QUOTE=${QUOTES[$INDEX]}" >> $GITHUB_ENV
 
-      - name: Update README with new quote
+      - name: Update README using Node.js
         run: |
-          sed -i "s|<!--DAILY_QUOTE-->.*|<!--DAILY_QUOTE--> $QUOTE|" README.md
+          node -e "
+            const fs = require('fs');
+            const readme = fs.readFileSync('README.md', 'utf8');
+            const newReadme = readme.replace(/<!--DAILY_QUOTE-->.*$/, '<!--DAILY_QUOTE--> ' + process.env.QUOTE);
+            fs.writeFileSync('README.md', newReadme);
+          "
 
       - name: Commit and push changes
         run: |
