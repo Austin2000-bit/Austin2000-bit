@@ -16,11 +16,11 @@ jobs:
       - name: Pick a random quote
         run: |
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
-          QUOTE=$(shuf -n 1 quotes.txt)  # Pick random quote from quotes.txt
+          QUOTE=$(shuf -n 1 quotes.txt)
 
-          # Replace placeholders safely
-          perl -i -pe "s/<!--DAILY_QUOTE-->/\Q$QUOTE\E/" README.md
-          perl -i -pe "s/<!--LAST_UPDATED-->/Updated on: $TIMESTAMP/" README.md
+          # Replace placeholders safely using | as delimiter to avoid conflicts with /
+          perl -i -pe "s|<!--DAILY_QUOTE-->|$QUOTE|" README.md
+          perl -i -pe "s|<!--LAST_UPDATED-->|Updated on: $TIMESTAMP|" README.md
 
       - name: Commit & create/update pull request
         uses: peter-evans/create-pull-request@v5
