@@ -13,23 +13,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Pick a random quote and update README
-        run: |
-          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
-          # Pick a random quote directly in Perl (no backslashes)
-          perl -i -pe '
-            BEGIN {
-              open(F,"quotes.txt") or die $!;
-              @lines = <F>;
-              close(F);
-              $q = $lines[int(rand(@lines))];  # pick a random line
-              chomp($q);                        # remove newline
-            }
-            s|<!--DAILY_QUOTE-->|$q|' README.md
-
-          # Update last updated timestamp
-          perl -i -pe "s|<!--LAST_UPDATED-->|Updated on: $TIMESTAMP|" README.md
+      - name: Update README
+        run: node update-readme.js
 
       - name: Commit & create/update pull request
         uses: peter-evans/create-pull-request@v5
