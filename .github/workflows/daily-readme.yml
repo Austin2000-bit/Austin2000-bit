@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: '20'
 
-      # Step 3: Update README with random quote
+      # Step 3: Update README
       - name: Update README
         run: |
           node -e "
@@ -54,33 +54,12 @@ jobs:
           console.log('README updated successfully.');
           "
 
-      # Step 4: Commit changes locally
-      - name: Commit changes
+      # Step 4: Commit and push changes directly to main
+      - name: Commit and push changes
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -B daily-readme-update  # create branch locally
           git add README.md
           git diff --cached --quiet || git commit -m "Update daily dev quote and timestamp"
-
-      # Step 5: Push using GITHUB_TOKEN
-      - name: Push changes
-        run: |
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-          if git push origin HEAD:main; then
-            echo "PUSH_SUCCESS=true" >> $GITHUB_ENV
-          else
-            echo "PUSH_SUCCESS=false" >> $GITHUB_ENV
-          fi
-
-      # Step 6: Create PR if push fails (main protected)
-      - name: Create pull request if push blocked
-        if: env.PUSH_SUCCESS == 'false'
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Update daily dev quote and timestamp"
-          branch: daily-readme-update
-          base: main
-          title: "Daily README Update"
-          body: "This PR updates the daily dev quote and timestamp in README.md"
+          git push origin HEAD:main
