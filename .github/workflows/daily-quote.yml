@@ -1,0 +1,32 @@
+name: Update Daily Dev Quote
+
+on:
+  schedule:
+    # Runs every day at 8:00 UTC
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+
+jobs:
+  update-quote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Fetch a random dev quote
+        id: quote
+        run: |
+          QUOTE=$(curl -s https://api.quotable.io/random?tags=technology | jq -r '.content + " — " + .author')
+          echo "QUOTE=$QUOTE" >> $GITHUB_ENV
+
+      - name: Update README with new quote
+        run: |
+          sed -i "s|<!--DAILY_QUOTE-->.*|<!--DAILY_QUOTE--> $QUOTE|" README.md
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Update daily dev quote"
+          git push
