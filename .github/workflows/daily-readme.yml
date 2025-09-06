@@ -2,7 +2,7 @@ name: Daily README Quote Update
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Runs daily at midnight UTC
+    - cron: '0 0 * * *'  # Daily at midnight UTC
   workflow_dispatch:    # Allows manual trigger
 
 jobs:
@@ -16,10 +16,12 @@ jobs:
       - name: Pick a random quote
         run: |
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
-          QUOTE=$(shuf -n 1 quotes.txt)
+          
+          # Pick a random quote into a temporary file
+          shuf -n 1 quotes.txt > quote.tmp
 
-          # Replace placeholders safely using | as delimiter to avoid conflicts with /
-          perl -i -pe "s|<!--DAILY_QUOTE-->|$QUOTE|" README.md
+          # Replace placeholders safely
+          perl -i -pe 'BEGIN{undef $/; open(F,"quote.tmp"); $q=<F>; chomp $q;} s|<!--DAILY_QUOTE-->|$q|' README.md
           perl -i -pe "s|<!--LAST_UPDATED-->|Updated on: $TIMESTAMP|" README.md
 
       - name: Commit & create/update pull request
