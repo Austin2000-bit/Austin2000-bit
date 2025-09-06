@@ -2,12 +2,13 @@ name: Update Daily Dev Quote
 
 on:
   schedule:
-    - cron: "0 8 * * *" # daily at 8:00 UTC
-  workflow_dispatch:
+    - cron: "0 8 * * *" # runs daily at 8:00 UTC
+  workflow_dispatch:      # allows manual trigger
 
 jobs:
   update-quote:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
