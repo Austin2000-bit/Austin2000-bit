@@ -13,8 +13,6 @@
 ![](https://nirzak-streak-stats.vercel.app/?user=Austin2000-bit&theme=dark&hide_border=false)<br/>
 ![](https://github-readme-stats.vercel.app/api/top-langs/?username=Austin2000-bit&theme=dark&hide_border=false&include_all_commits=true&count_private=true&layout=compact)
 
-### ✍️ Random Dev Quote (Auto-updated daily)
-<!--DAILY_QUOTE--> 💡 Quote will appear here
 
 <!--LAST_UPDATED--> Updated on:
 
