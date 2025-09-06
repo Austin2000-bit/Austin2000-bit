@@ -13,19 +13,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: Update README
-        run: node update-readme.js
-
-      - name: Commit & push changes
+      - name: Pick a random quote and update README
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -b daily-readme-update || git checkout daily-readme-update
-          git add README.md
-          git commit -m "Daily README quote update" || echo "No changes to commit"
-          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/Austin2000-bit/Austin2000-bit.git daily-readme-update --force
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          QUOTE=$(shuf -n 1 quotes.txt)
+          sed -i "s|<!--DAILY_QUOTE-->|$QUOTE|" README.md
+          sed -i "s|<!--LAST_UPDATED-->|Updated on: $TIMESTAMP|" README.md
+
+      - name: Commit & create/update pull request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          branch: daily-readme-update
+          commit-message: "Daily README quote update"
+          title: "Daily README quote update"
+          body: "Automated update of Daily Dev Quote."
+          auto-merge: true
+          auto-merge-method: squash
