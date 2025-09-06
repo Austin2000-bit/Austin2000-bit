@@ -17,13 +17,16 @@ jobs:
         run: |
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
 
-          # Replace <!--DAILY_QUOTE--> with a random line from quotes.txt directly in Perl
+          # Pick a random quote directly in Perl to avoid backslashes
           perl -i -pe '
             BEGIN {
-              @q = `shuf -n 1 quotes.txt`;   # pick random quote
-              chomp($q[0]);
+              open(F,"quotes.txt") or die $!;
+              @lines = <F>;
+              close(F);
+              $q = $lines[int(rand(@lines))];
+              chomp($q);
             }
-            s|<!--DAILY_QUOTE-->|$q[0]|' README.md
+            s|<!--DAILY_QUOTE-->|$q|' README.md
 
           # Update last updated timestamp
           perl -i -pe "s|<!--LAST_UPDATED-->|Updated on: $TIMESTAMP|" README.md
