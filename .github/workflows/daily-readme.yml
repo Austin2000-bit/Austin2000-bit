@@ -1,9 +1,9 @@
-name: Daily README Update
+name: Daily README Quote Update
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Runs daily at midnight UTC
-  workflow_dispatch:    # Allows manual trigger
+    - cron: '0 0 * * *'  # Daily at midnight UTC
+  workflow_dispatch:
 
 jobs:
   update-readme:
@@ -13,21 +13,19 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: Run your update script
+      - name: Update Daily Dev Quote
         run: |
-          # Example: update README daily quote
-          node update-readme.js
+          QUOTE=$(curl -s https://api.quotable.io/random | jq -r '.content')
+          TIMESTAMP=$(date -u)
+          # Replace placeholder in README
+          sed -i "s|<!--DAILY_QUOTE-->|$QUOTE|g" README.md
+          sed -i "s|<!--LAST_UPDATED-->|Updated on: $TIMESTAMP|g" README.md
 
       - name: Create or update pull request
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{secrets.PAT_TOKEN}}   # <-- Use the PAT secret here
+          token: ${{ secrets.PAT_TOKEN }}
           branch: daily-readme-update
-          commit-message: "Daily README update"
-          title: "Daily README update"
-          body: "Automated daily update of README."
+          commit-message: "Daily README quote update"
+          title: "Daily README quote update"
+          body: "Automated update of Daily Dev Quote."
