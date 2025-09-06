@@ -2,31 +2,27 @@ name: Daily README Quote Update
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Runs daily at midnight UTC
-  workflow_dispatch:
+    - cron: '0 0 * * *'  # Daily at midnight UTC
+  workflow_dispatch:    # Manual trigger
 
 jobs:
   update-readme:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y jq
-
-      - name: Update Daily Dev Quote
+      - name: Pick a random quote
         run: |
-          # Fetch a random quote
-          QUOTE=$(curl -s https://api.quotable.io/random | jq -r '.content')
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          QUOTE=$(shuf -n 1 quotes.txt)  # Pick random line from quotes.txt
+          
+          # Replace placeholders safely using Perl
+          perl -i -pe "s/<!--DAILY_QUOTE-->/\Q$QUOTE\E/" README.md
+          perl -i -pe "s/<!--LAST_UPDATED-->/Updated on: $TIMESTAMP/" README.md
 
-          # Make sure placeholders are on their own lines in README.md
-          sed -i "s|<!--DAILY_QUOTE-->|$QUOTE|g" README.md
-          sed -i "s|<!--LAST_UPDATED-->|Updated on: $TIMESTAMP|g" README.md
-
-      - name: Commit & Create/Update Pull Request
+      - name: Commit & create/update pull request
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.PAT_TOKEN }}
