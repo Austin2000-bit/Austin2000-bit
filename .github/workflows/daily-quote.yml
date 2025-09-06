@@ -2,7 +2,6 @@ name: Update Daily Dev Quote
 
 on:
   schedule:
-    # Runs every day at 8:00 UTC
     - cron: "0 8 * * *"
   workflow_dispatch:
 
@@ -13,11 +12,18 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Fetch a random dev quote
+      - name: Select a random quote
         id: quote
         run: |
-          QUOTE=$(curl -s https://api.quotable.io/random?tags=technology | jq -r '.content + " — " + .author')
-          echo "QUOTE=$QUOTE" >> $GITHUB_ENV
+          QUOTES=(
+            "Code is like humor. When you have to explain it, it’s bad. — Cory House"
+            "Experience is the name everyone gives to their mistakes. — Oscar Wilde"
+            "First, solve the problem. Then, write the code. — John Johnson"
+            "Simplicity is the soul of efficiency. — Austin Freeman"
+            "Before software can be reusable it first has to be usable. — Ralph Johnson"
+          )
+          INDEX=$((RANDOM % ${#QUOTES[@]}))
+          echo "QUOTE=${QUOTES[$INDEX]}" >> $GITHUB_ENV
 
       - name: Update README with new quote
         run: |
