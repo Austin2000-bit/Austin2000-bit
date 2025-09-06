@@ -1,39 +1,47 @@
-name: Daily README Update
+name: Update Daily README
 
 on:
   schedule:
-    - cron: '0 0 * * *'   # daily at midnight UTC
-  workflow_dispatch:       # manual trigger
+    - cron: '0 0 * * *'  # runs daily at midnight UTC
+  workflow_dispatch:      # allows manual trigger
 
 jobs:
   update-readme:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository
+      # Step 1: Checkout repository
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # 2️⃣ Setup Node.js
+      # Step 2: Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      # 3️⃣ Update README with random quote
+      # Step 3: Update README with random quote
       - name: Update README
         run: |
           node -e "
           const fs = require('fs');
           const file = 'README.md';
-          if (!fs.existsSync(file)) process.exit(0);
+          if (!fs.existsSync(file)) { 
+            console.log('README.md not found, skipping update.'); 
+            process.exit(0); 
+          }
 
           const quotes = [
             'Code is like humor. When you have to explain it, it’s bad. — Cory House',
             'Experience is the name everyone gives to their mistakes. — Oscar Wilde',
             'First, solve the problem. Then, write the code. — John Johnson',
             'Simplicity is the soul of efficiency. — Austin Freeman',
-            'Before software can be reusable it first has to be usable. — Ralph Johnson'
+            'Before software can be reusable it first has to be usable. — Ralph Johnson',
+            'Programs must be written for people to read, and only incidentally for machines to execute. — Harold Abelson',
+            'Any fool can write code that a computer can understand. Good programmers write code that humans can understand. — Martin Fowler',
+            'Debugging is like being the detective in a crime movie where you are also the murderer. — Filipe Fortes',
+            'The best way to get a project done faster is to start sooner. — Jim Highsmith',
+            'Code never lies, comments sometimes do. — Ron Jeffries'
           ];
 
           const quote = quotes[Math.floor(Math.random() * quotes.length)];
@@ -46,20 +54,18 @@ jobs:
           console.log('README updated successfully.');
           "
 
-      # 4️⃣ Commit changes to a temporary branch
+      # Step 4: Commit changes locally
       - name: Commit changes
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -b daily-readme-update || git checkout daily-readme-update
+          git checkout -B daily-readme-update  # create branch locally
           git add README.md
           git diff --cached --quiet || git commit -m "Update daily dev quote and timestamp"
 
-      # 5️⃣ Try to push directly to main
-      - name: Push directly
-        id: push
+      # Step 5: Push using GITHUB_TOKEN
+      - name: Push changes
         run: |
-          set -e
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           if git push origin HEAD:main; then
             echo "PUSH_SUCCESS=true" >> $GITHUB_ENV
@@ -67,7 +73,7 @@ jobs:
             echo "PUSH_SUCCESS=false" >> $GITHUB_ENV
           fi
 
-      # 6️⃣ Fallback: Create PR if push fails
+      # Step 6: Create PR if push fails (main protected)
       - name: Create pull request if push blocked
         if: env.PUSH_SUCCESS == 'false'
         uses: peter-evans/create-pull-request@v5
@@ -78,4 +84,3 @@ jobs:
           base: main
           title: "Daily README Update"
           body: "This PR updates the daily dev quote and timestamp in README.md"
-          create-branch: true  # ensures branch is created if it doesn't exist
