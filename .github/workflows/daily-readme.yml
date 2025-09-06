@@ -3,7 +3,7 @@ name: Update Daily README
 on:
   schedule:
     - cron: '0 0 * * *'  # runs daily at midnight UTC
-  workflow_dispatch:      # allows manual trigger
+  workflow_dispatch:      # manual trigger
 
 jobs:
   update-readme:
@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: '20'
 
-      # Step 3: Update README safely
+      # Step 3: Update README
       - name: Update README
         run: |
           node -e "
@@ -54,11 +54,11 @@ jobs:
           console.log('README updated successfully.');
           "
 
-      # Step 4: Commit and push changes
+      # Step 4: Commit and push changes using GITHUB_TOKEN
       - name: Commit and push changes
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git add README.md
           git diff --cached --quiet || git commit -m "Update daily dev quote and timestamp"
-          git push
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
