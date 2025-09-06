@@ -28,4 +28,4 @@ jobs:
           git checkout -b daily-readme-update || git checkout daily-readme-update
           git add README.md
           git commit -m "Daily README quote update" || echo "No changes to commit"
-          git push origin daily-readme-update --force
+          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/Austin2000-bit/Austin2000-bit.git daily-readme-update --force
