@@ -13,15 +13,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Pick a random quote
+      - name: Pick a random quote and update README
         run: |
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
-          
-          # Pick a random quote into a temporary file
-          shuf -n 1 quotes.txt > quote.tmp
 
-          # Replace placeholders safely
-          perl -i -pe 'BEGIN{undef $/; open(F,"quote.tmp"); $q=<F>; chomp $q;} s|<!--DAILY_QUOTE-->|$q|' README.md
+          # Replace <!--DAILY_QUOTE--> with a random line from quotes.txt directly in Perl
+          perl -i -pe '
+            BEGIN {
+              @q = `shuf -n 1 quotes.txt`;   # pick random quote
+              chomp($q[0]);
+            }
+            s|<!--DAILY_QUOTE-->|$q[0]|' README.md
+
+          # Update last updated timestamp
           perl -i -pe "s|<!--LAST_UPDATED-->|Updated on: $TIMESTAMP|" README.md
 
       - name: Commit & create/update pull request
