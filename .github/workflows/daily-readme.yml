@@ -2,20 +2,18 @@ name: Daily README Quote Update
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Runs daily at midnight UTC
-  workflow_dispatch:      # Allows manual trigger
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
   update-readme:
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: write
-      pull-requests: write
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          persist-credentials: false
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -26,15 +24,13 @@ jobs:
         run: |
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
           QUOTE=$(shuf -n 1 quotes.txt)
-
-          # Replace quote section
           perl -0777 -i -pe "s|(<!--DAILY_QUOTE-->)(.*?)(<!--/DAILY_QUOTE-->)|\1\n$QUOTE\n\3|s" README.md
-
-          # Replace timestamp section
           perl -0777 -i -pe "s|(<!--LAST_UPDATED-->)(.*?)(<!--/LAST_UPDATED-->)|\1\nUpdated on: $TIMESTAMP\n\3|s" README.md
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Commit and push as personal account
+        run: |
+          git config user.name "Austin2000-bit"
+          git config user.email "austinezekiel95@gmail.com"
           git add README.md
           git commit -m "Daily README quote update" || echo "No changes to commit"
-          git push
+          git push https://${{ secrets.PAT_TOKEN }}@github.com/Austin2000-bit/<REPO>.git HEAD:main
