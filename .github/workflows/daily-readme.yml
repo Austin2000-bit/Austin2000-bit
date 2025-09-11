@@ -11,7 +11,6 @@ jobs:
 
     permissions:
       contents: write
-      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -33,8 +32,10 @@ jobs:
           # Replace timestamp section
           perl -0777 -i -pe "s|(<!--LAST_UPDATED-->)(.*?)(<!--/LAST_UPDATED-->)|\1\nUpdated on: $TIMESTAMP\n\3|s" README.md
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Commit and push changes as personal account
+        run: |
+          git config user.name "Austin2000-bit"
+          git config user.email "austinezekiel95@gmail.com"
           git add README.md
           git commit -m "Daily README quote update" || echo "No changes to commit"
-          git push
+          git push https://${{ secrets.PAT_TOKEN }}@github.com/Austin2000-bit/<REPO>.git HEAD:main
