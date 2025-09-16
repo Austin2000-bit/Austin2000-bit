@@ -21,11 +21,11 @@
 
 ### ✍️ Daily Dev Quote
 <!--DAILY_QUOTE-->
-Before software can be reusable it first has to be usable.
+Programs must be written for people to read, and only incidentally for machines to execute.
 <!--/DAILY_QUOTE-->
 
 <!--LAST_UPDATED-->
-Updated on: 2025-09-15 01:58:36 UTC
+Updated on: 2025-09-16 01:49:24 UTC
 <!--/LAST_UPDATED-->
 
 ---
