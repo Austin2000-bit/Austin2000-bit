@@ -21,11 +21,11 @@
 
 ### ✍️ Daily Dev Quote
 <!--DAILY_QUOTE-->
-Experience is the name everyone gives to their mistakes.
+Before software can be reusable it first has to be usable.
 <!--/DAILY_QUOTE-->
 
 <!--LAST_UPDATED-->
-Updated on: 2025-11-18 02:00:23 UTC
+Updated on: 2025-11-19 01:59:52 UTC
 <!--/LAST_UPDATED-->
 
 ---
