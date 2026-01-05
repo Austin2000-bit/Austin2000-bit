@@ -21,11 +21,11 @@
 
 ### ✍️ Daily Dev Quote
 <!--DAILY_QUOTE-->
-Talk is cheap. Show me the code.
+First, solve the problem. Then, write the code.
 <!--/DAILY_QUOTE-->
 
 <!--LAST_UPDATED-->
-Updated on: 2026-01-04 02:28:06 UTC
+Updated on: 2026-01-05 02:27:35 UTC
 <!--/LAST_UPDATED-->
 
 ---
