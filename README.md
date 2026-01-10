@@ -21,11 +21,11 @@
 
 ### ✍️ Daily Dev Quote
 <!--DAILY_QUOTE-->
-Experience is the name everyone gives to their mistakes.
+First, solve the problem. Then, write the code.
 <!--/DAILY_QUOTE-->
 
 <!--LAST_UPDATED-->
-Updated on: 2026-01-09 02:12:11 UTC
+Updated on: 2026-01-10 02:08:00 UTC
 <!--/LAST_UPDATED-->
 
 ---
