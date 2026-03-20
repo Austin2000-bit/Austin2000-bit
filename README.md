@@ -21,11 +21,11 @@
 
 ### ✍️ Daily Dev Quote
 <!--DAILY_QUOTE-->
-Code is like humor. When you have to explain it, it’s bad.
+Before software can be reusable it first has to be usable.
 <!--/DAILY_QUOTE-->
 
 <!--LAST_UPDATED-->
-Updated on: 2026-03-19 02:50:48 UTC
+Updated on: 2026-03-20 02:41:30 UTC
 <!--/LAST_UPDATED-->
 
 ---
