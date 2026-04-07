@@ -21,11 +21,11 @@
 
 ### ✍️ Daily Dev Quote
 <!--DAILY_QUOTE-->
-Talk is cheap. Show me the code.
+Strive for clarity, not cleverness.
 <!--/DAILY_QUOTE-->
 
 <!--LAST_UPDATED-->
-Updated on: 2026-04-06 03:25:51 UTC
+Updated on: 2026-04-07 03:15:56 UTC
 <!--/LAST_UPDATED-->
 
 ---
