@@ -21,11 +21,11 @@
 
 ### ✍️ Daily Dev Quote
 <!--DAILY_QUOTE-->
-Before software can be reusable it first has to be usable.
+Strive for clarity, not cleverness.
 <!--/DAILY_QUOTE-->
 
 <!--LAST_UPDATED-->
-Updated on: 2026-04-17 03:27:56 UTC
+Updated on: 2026-04-18 03:16:04 UTC
 <!--/LAST_UPDATED-->
 
 ---
