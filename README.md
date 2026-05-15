@@ -21,11 +21,11 @@
 
 ### ✍️ Daily Dev Quote
 <!--DAILY_QUOTE-->
-First, solve the problem. Then, write the code.
+Before software can be reusable it first has to be usable.
 <!--/DAILY_QUOTE-->
 
 <!--LAST_UPDATED-->
-Updated on: 2026-05-14 03:58:35 UTC
+Updated on: 2026-05-15 04:03:03 UTC
 <!--/LAST_UPDATED-->
 
 ---
