@@ -21,11 +21,11 @@
 
 ### ✍️ Daily Dev Quote
 <!--DAILY_QUOTE-->
-Talk is cheap. Show me the code.
+Before software can be reusable it first has to be usable.
 <!--/DAILY_QUOTE-->
 
 <!--LAST_UPDATED-->
-Updated on: 2026-10-12 05:31:02 UTC
+Updated on: 2026-10-13 06:28:01 UTC
 <!--/LAST_UPDATED-->
 
 ---
